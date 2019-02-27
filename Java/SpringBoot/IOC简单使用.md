@@ -38,7 +38,7 @@ public class Cat implements IAnimal {
 
 如果申明了两个或者多个组件，这两个组件实现/继承同一个基类，那么使用@ComponentScan进行扫描时，由于扫描到两个组件，编译时会报错。在需要优先使用的组件上面添加@Primary注解表示使用当前的组件。
 
-```
+```java
 package com.hi.controllers;
 
 import org.springframework.context.annotation.Primary;
