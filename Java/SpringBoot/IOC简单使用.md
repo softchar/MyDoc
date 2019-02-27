@@ -57,7 +57,50 @@ public class Cat implements IAnimal {
 
 #### 生命周期
 
-默认情况下，即没有指定生命周期的情况下，Spring创建的bean都是单例。
+默认情况下，即没有指定生命周期的情况下，Spring创建的bean都是单例。Spring定义了多种作用域，可以基于这些作用域创建bean，包括：
+
+- 单例（Singleton）：在整个应用中，只创建bean的一个实例。
+- 原型（Prototype）：每次注入或者通过Spring应用上下文获取的时候，都会创建一个新的bean实例。
+- 会话（Session）：在Web应用中，为每个会话创建一个bean实例。
+- 请求（Request）：在Web应用中，为每个请求创建一个bean实例。
+
+```java
+//作用域：原型
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class Notepad{...}
+
+//作用域：原型
+@Bean
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class Notepd{...}
+
+//作用域：会话
+@Component
+@Scope(value=WebApplicationContext.SCOPE_SESSION,
+      proxyMode=ScopedProxyMode.INTERFACES)
+public ShoppingCart cat(){...}
+```
+
+要注意的是，@Scope同时还有一个proxyMode属性，它被设置成了ScopedProxyMode.INTERFACES。这个属性解决了将会话或请求作用的bean注入到**单例**bean中所遇到的问题。
+
+> 在描述proxyMode属性之前，我们先来看一下proxyMode所解决问题的场景.
+>
+> 假设我们要将ShoppingCart bean注入到单例StoreService bean的Setter方法中，如下所以
+>
+> ```java
+> @Component
+> public class StoreService{
+>     @Autowired
+>     public void setShoppingCart(ShoppingCart shoppingCart){
+>         this.shoppingCart = shoppingCarg;
+>     }
+> }
+> ```
+>
+> 因为StoreService是一个单例的bean，会在Spring应用上下文加载的时候创建。当它创建的时候，Spring会试图将ShoppingCart bean注入到`setShoppingCart()`方法中。但是ShoppingCart bean是会话作用域的，此时并不存在。知道某个用于进入系统，创建了会话之后，才会出现ShoppingCart实例。
+
+
 
 ## 扫描
 
